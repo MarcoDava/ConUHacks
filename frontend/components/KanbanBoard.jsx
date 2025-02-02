@@ -8,10 +8,10 @@ import FilterBar from "./FilterBar"
 
 const initialData = {
   tasks: {
-    "task-1": { id: "task-1", content: "Take out the trash", color: "bg-blue-200" },
-    "task-2": { id: "task-2", content: "Grocery shopping", color: "bg-green-200" },
-    "task-3": { id: "task-3", content: "Pay bills", color: "bg-yellow-200" },
-    "task-4": { id: "task-4", content: "Walk the dog", color: "bg-pink-200" },
+    "task-1": { id: "task-1", content: "Merge Conflict #7", color: "bg-blue-200" },
+    "task-2": { id: "task-2", content: "Add svg images to public", color: "bg-green-200" },
+    "task-3": { id: "task-3", content: "Pull Request #2 from Ethan", color: "bg-yellow-200" },
+    "task-4": { id: "task-4", content: "Update README", color: "bg-pink-200" },
   },
   columns: {
     "column-1": {

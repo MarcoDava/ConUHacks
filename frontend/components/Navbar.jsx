@@ -1,18 +1,19 @@
 import Link from "next/link"
-import { Kanban, Home, Calendar, Users, Settings, LogOut } from "lucide-react"
+import { Kanban, Home, Users, LogOut } from "lucide-react"
 
 const navItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Kanban, label: "Kanban Board", href: "/kanban" },
-  { icon: Calendar, label: "Calendar", href: "/calendar" },
   { icon: Users, label: "Team", href: "/team" },
-  { icon: Settings, label: "Settings", href: "/settings" },
 ]
 
 export default function Navbar() {
   return (
-    <nav className="w-72 h-screen bg-gray-800 text-white p-4 flex flex-col">
-      <h2 className="text-xl font-bold mb-8">PM Dashboard</h2>
+    <nav className="w-60 h-screen bg-gray-800 text-white p-4 flex flex-col">
+      <div className="flex items-center mb-8">
+        <img src="/GitTissueLogo.png" alt="GitTissue Logo" className="w-8 h-8 mr-2" />
+        <h2 className="text-xl font-bold">Git Tissues</h2>
+      </div>
       <ul className="flex-grow">
         {navItems.map((item) => (
           <li key={item.href} className="mb-4">
