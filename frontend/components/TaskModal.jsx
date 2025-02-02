@@ -13,11 +13,11 @@ const colors = [
   ]
 
   const teamMembers = [
-    { id: 1, name: "Alice Johnson", image: "/huzz1.jpg" },
-    { id: 2, name: "Bob Smith", image: "/huzz2.jpg" },
-    { id: 3, name: "Charlie Brown", image: "/huzz3.jpg" },
-    { id: 4, name: "Diana Prince", image: "/huzz4.jpg" },
-    { id: 5, name: "Ethan Hunt", image: "/huzz5.jpg" },
+    { id: 1, name: "Alice Johnson", username: "xuej41",  image: "/huzz1.jpg" },
+    { id: 2, name: "Bob Smith", username: "xuej41", image: "/huzz2.jpg" },
+    { id: 3, name: "Charlie Brown", username: "xuej41", image: "/huzz3.jpg" },
+    { id: 4, name: "Diana Prince", username: "MarcoDava", image: "/huzz4.jpg" },
+    { id: 5, name: "Ethan Hunt", username: "MarcoDava", image: "/huzz5.jpg" },
   ];
 
 export default function TaskModal({ task, isOpen, onClose, updateTask }) {
@@ -30,6 +30,7 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [isEditingGithubLink, setIsEditingGithubLink] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isTextBoxVisible, setIsTextBoxVisible] = useState(false);
+  const [textAreaText, setTextAreaText] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -50,6 +51,23 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const handleCancelDescriptionEdit = () => {
     setDescription(task.description || "");
     setIsEditingDescription(false);
+  };
+
+  const handleFindCandidate = async () => {
+    // if (!description) {
+    //   alert("Please provide a GitHub issue description.");
+    //   return;
+    // }    
+
+    const developers = teamMembers.map((member) => member.username);
+    const response = await fetch("http://localhost:4000/process-issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ githubIssue: "fix stuff", usernames: developers, format: "json" }),
+    });
+    const { result } = await response.json();
+    setTextAreaText(JSON.stringify(result.best1));
+    setIsTextBoxVisible(true);
   };
 
   if (!isOpen) return null;
@@ -208,7 +226,7 @@ return (
             </div>
             <button
               type="button"
-              onClick={() => setIsTextBoxVisible(!isTextBoxVisible)}
+              onClick={() => handleFindCandidate()}
               className="ml-4 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-full transition duration-300"
             >
               Find the Best Candidate
@@ -219,6 +237,8 @@ return (
               className="border rounded-xl p-2 w-full mb-4"
               placeholder="Generated text from ChatGPT..."
               rows="4"
+              value={textAreaText}
+              readOnly
             />
           )}
           <div className="flex items-center mb-4">
