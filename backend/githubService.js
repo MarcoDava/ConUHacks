@@ -6,6 +6,7 @@ dotenv.config();
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_API_URL = "https://api.github.com/graphql";
+const GITHUB_REST_API_URL = 'https://api.github.com/repos';
 
 /**
  * Fetches the list of files in a GitHub repository
@@ -38,22 +39,44 @@ async function fetchFileList(owner, repo, branch) {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${GITHUB_TOKEN}`,
+                    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, // Make sure GITHUB_TOKEN is correctly set
                 },
             }
         );
 
+        // Log the entire response to see if there's any additional info
+        console.log("GitHub API Response:", response.data);
+
         if (response.data.errors) {
+            // If the error is related to the branch being invalid or missing, skip this repo
+            if (response.data.errors[0].message.includes("not found") || response.data.errors[0].message.includes("Invalid reference")) {
+                console.warn(`Skipping repository ${owner}/${repo} because branch "${branch}" is invalid or missing.`);
+                return [];  // Skip this repository
+            }
             throw new Error(`GitHub API Error: ${response.data.errors[0].message}`);
         }
 
-        const files = response.data.data.repository.object.entries.filter(entry => entry.type === "blob");
+        const repository = response.data.data.repository;
+        if (!repository || !repository.object) {
+            console.warn(`Repository ${owner}/${repo} not found or no file tree data available. Skipping.`);
+            return [];  // Skip this repository if file tree is not available
+        }
+
+        const files = repository.object.entries?.filter(entry => entry.type === "blob") || [];
+
+        // If no files are found, log that and return an empty array
+        if (files.length === 0) {
+            console.warn(`No files found in repository ${owner}/${repo} on branch ${branch}. Skipping.`);
+        }
+
         return files.map(file => file.path);
     } catch (error) {
         console.error("Error fetching file list:", error.message);
-        throw new Error("Failed to fetch file list from GitHub.");
+        return [];  // Return empty array if error occurs
     }
 }
+
+
 
 /**
  * Fetches the code authored by a specific user for a file using GraphQL API (with fallback to REST API)

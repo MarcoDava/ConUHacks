@@ -1,58 +1,36 @@
-import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
-import cors from "cors";
 
+// Load environment variables
 dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const GITHUB_API_URL = "https://api.github.com/users";
 
 /**
- * Fetches all repository links for a given GitHub username, handling pagination.
+ * Fetches the list of repositories for a GitHub user, skipping empty repositories
  * @param {string} username - The GitHub username
- * @returns {Promise<string[]>} - List of repository links
+ * @returns {Promise<Object[]>} - A list of repositories with repo_name and repo_owner attributes
  */
-async function getRepoLinks(username) {
-    const repoLinks = [];
-    let page = 1;
-    const perPage = 100; // Max allowed by GitHub API
-
+async function fetchUserRepositories(username) {
     try {
-        while (true) {
-            const response = await axios.get(`https://api.github.com/users/${username}/repos`, {
-                params: { per_page: perPage, page },
-                headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
-            });
+        const response = await axios.get(`${GITHUB_API_URL}/${username}/repos`, {
+            headers: {
+                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, // Optional if using a token for authentication
+                "Content-Type": "application/json",
+            },
+        });
 
-            if (response.data.length === 0) break; // No more repos to fetch
+        // Filter out repositories that are empty by checking their size
+        const repositories = response.data.filter((repo) => repo.size > 0).map((repo) => ({
+            repo_name: repo.name,
+            repo_owner: repo.owner.login, // repo.owner.login is the owner's GitHub username
+        }));
 
-            repoLinks.push(...response.data.map(repo => repo.html_url));
-            page++;
-        }
-
-        return repoLinks;
-
+        return repositories;
     } catch (error) {
-        console.error("Error fetching repository links:", error.response?.data?.message || error.message);
-        throw new Error("Failed to fetch repository links from GitHub.");
+        console.error("Error fetching repositories:", error.message);
+        throw new Error("Failed to fetch repositories.");
     }
 }
 
-app.get('/repos/:username', async (req, res) => {
-    const { username } = req.params;
-    console.log(`Received request for username: ${username}`); // Add this line
-
-    try {
-        const repoLinks = await getRepoLinks(username);
-        res.json({ username, repositories: repoLinks });
-    } catch (error) {
-        console.error("Error fetching repositories:", error); // Add detailed logging
-        res.status(500).json({ error: error.message });
-    }
-});
-
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+export { fetchUserRepositories };
