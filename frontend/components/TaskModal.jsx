@@ -81,6 +81,23 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
     setIsTextBoxVisible(true);
   };
 
+  const handleFindCandidate = async () => {
+    // if (!description) {
+    //   alert("Please provide a GitHub issue description.");
+    //   return;
+    // }    
+
+    const developers = teamMembers.map((member) => member.username);
+    const response = await fetch("http://localhost:4000/process-issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ githubIssue: "fix stuff", usernames: developers, format: "json" }),
+    });
+    const { result } = await response.json();
+    setTextAreaText(JSON.stringify(result.best1));
+    setIsTextBoxVisible(true);
+  };
+
   if (!isOpen) return null;
 
 return (
