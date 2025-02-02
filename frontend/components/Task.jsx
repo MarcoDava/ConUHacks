@@ -31,7 +31,7 @@ export default function Task({ task, index, updateTask, deleteTask }) {
               <span className="mr-2">{task.content}</span>
               <div className="flex space-x-2">
                 <button onClick={() => setIsModalOpen(true)} className="text-gray-200 bg-blue-400 hover:bg-blue-600 transition duration-300 border px-3 py-1.5 rounded-full">
-                  Edit
+                  View
                 </button>
                 <button onClick={() => deleteTask(task.id)} className="text-gray-200 bg-red-500 hover:bg-red-700 transition duration-300 border px-3 py-1.5 rounded-full">
                   Delete

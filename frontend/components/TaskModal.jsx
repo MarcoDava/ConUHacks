@@ -12,12 +12,21 @@ const colors = [
     "bg-purple-200",
   ]
 
+  const teamMembers = [
+    { id: 1, name: "Alice Johnson", image: "/huzz1.jpg" },
+    { id: 2, name: "Bob Smith", image: "/huzz2.jpg" },
+    { id: 3, name: "Charlie Brown", image: "/huzz3.jpg" },
+    { id: 4, name: "Diana Prince", image: "/huzz4.jpg" },
+    { id: 5, name: "Ethan Hunt", image: "/huzz5.jpg" },
+  ];
+
 export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [content, setContent] = useState(task.content);
   const [description, setDescription] = useState(task.description || "");
   const [color, setColor] = useState(task.color || "bg-gray-200");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [isTextBoxVisible, setIsTextBoxVisible] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +39,16 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
 return (
     <div className={`fixed inset-0 bg-gray-100 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
         <div className={`p-6 rounded-xl shadow-lg w-3/4 ${color} transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+        <   div className="flex space-x-2">
+                {colors.map((c) => (
+                    <button
+                        key={c}
+                        type="button"
+                        className={`mb-3 w-6 h-6 rounded-full ${c} ${color === c ? "ring-2 ring-offset-2 ring-gray-400" : ""}`}
+                        onClick={() => setColor(c)}
+                    />
+                ))}
+            </div>
             <form onSubmit={handleSubmit} className={`flex flex-col space-y-4 transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
             <div className="flex items-center mb-4">
             {isEditingTitle ? (
@@ -73,17 +92,37 @@ return (
               <PencilIcon className="h-5 w-5" />
             </button>
           </div>
-                <div className="flex space-x-2">
-                    {colors.map((c) => (
-                        <button
-                            key={c}
-                            type="button"
-                            className={`w-6 h-6 rounded-full ${c} ${color === c ? "ring-2 ring-offset-2 ring-gray-400" : ""}`}
-                            onClick={() => setColor(c)}
-                        />
-                    ))}
+            
+            <div className="flex items-center mb-4">
+            <div className="flex space-x-2">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="relative group">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {member.name}
+                  </span>
                 </div>
-                {/* Future features like chatbot textbox and drag and drop contributor list can be added here */}
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsTextBoxVisible(!isTextBoxVisible)}
+              className="ml-4 bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-full transition duration-300"
+            >
+              Find the Best Candidate
+            </button>
+          </div>
+          {isTextBoxVisible && (
+            <textarea
+              className="border rounded-xl p-2 w-full mb-4"
+              placeholder="Generated text from ChatGPT..."
+              rows="4"
+            />
+          )}
                 <div className="flex justify-between">
                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 transition duration-300 rounded-full">
                         Save
