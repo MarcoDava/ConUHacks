@@ -80,17 +80,65 @@ app.get("/github/user-code", async (req, res) => {
 });
 
 /**
- * Start the Express server and integrate the Apollo GraphQL server.
+ * POST /process-issue
+ * Expects a JSON body with:
+ *   - githubIssue: a description of the GitHub issue.
+ *   - usernames: an array of GitHub usernames to process.
  */
-async function startServer() {
-  const apolloServer = await createApolloServer();
-  await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
-
-  app.listen(4000, () => {
-    console.log(`🚀 Server running at http://localhost:4000`);
-    console.log(`🚀 GraphQL endpoint at http://localhost:4000${apolloServer.graphqlPath}`);
+app.post("/process-issue", async (req, res) => {
+    const { githubIssue, usernames, format } = req.body;
+  
+    if (!githubIssue || !Array.isArray(usernames) || usernames.length === 0) {
+      return res.status(400).json({ error: "GitHub issue and usernames list are required." });
+    }
+  
+    try {
+      // Initialize an empty array to hold all the developer code
+      let allDevelopersCode = [];
+  
+      // Loop through each username and process their repositories
+      for (const username of usernames) {
+        // Fetch repositories for the given username
+        const repositories = await fetchUserRepositories(username);
+  
+        // For each repository, fetch the user's code from it
+        for (const repo of repositories) {
+          const { repo_name, repo_owner } = repo;
+          
+          // Fetch all user code from the repository
+          const userCode = await fetchAllUserCode(repo_owner, repo_name, "main", username);
+  
+          // Append the user's code to the allDevelopersCode array
+          allDevelopersCode.push({
+            name: username,
+            code: userCode,
+          });
+        }
+      }
+  
+      // Prepare the body to pass to ChatGPT
+      const result = await callChatGPT({ githubIssue, developers: allDevelopersCode }, format || "json");
+  
+      // Return the response from ChatGPT to the frontend
+      res.json({ result });
+    } catch (error) {
+      console.error("Error processing issue:", error.message);
+      res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
   });
-}
+  
+  /**
+   * Start the Express server and integrate the Apollo GraphQL server.
+   */
+  async function startServer() {
+    const apolloServer = await createApolloServer();
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app });
+  
+    app.listen(4000, () => {
+      console.log(`🚀 Server running at http://localhost:4000`);
+      console.log(`🚀 GraphQL endpoint at http://localhost:4000${apolloServer.graphqlPath}`);
+    });
+  }
 
 startServer().catch(console.error);
