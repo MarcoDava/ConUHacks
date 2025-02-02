@@ -11,7 +11,7 @@ const navItems = [
 
 export default function Navbar() {
   return (
-    <nav className="w-64 h-screen bg-gray-800 text-white p-4 flex flex-col">
+    <nav className="w-72 h-screen bg-gray-800 text-white p-4 flex flex-col">
       <h2 className="text-xl font-bold mb-8">PM Dashboard</h2>
       <ul className="flex-grow">
         {navItems.map((item) => (

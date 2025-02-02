@@ -28,7 +28,7 @@ export default function Task({ task, index, updateTask, deleteTask }) {
             className={`${task.color} p-4 px-6 mb-2 rounded shadow`}
           >
             <div className="flex justify-between items-center">
-              <span>{task.content}</span>
+              <span className="mr-4">{task.content}</span>
               <div className="flex space-x-2">
                 <button onClick={() => setIsModalOpen(true)} className="text-gray-200 bg-blue-600 hover:bg-blue-700 border px-3 py-1 rounded-lg">
                   Edit
