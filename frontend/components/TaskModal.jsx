@@ -24,7 +24,9 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [content, setContent] = useState(task.content);
   const [description, setDescription] = useState(task.description || "");
   const [color, setColor] = useState(task.color || "bg-gray-200");
+  const [githubLink, setGithubLink] = useState(task.githubLink || "");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingGithubLink, setIsEditingGithubLink] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isTextBoxVisible, setIsTextBoxVisible] = useState(false);
 
@@ -32,6 +34,21 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
     e.preventDefault();
     updateTask(task.id, content, color, description);
     onClose();
+  };
+
+  const handleCancelTitleEdit = () => {
+    setContent(task.content);
+    setIsEditingTitle(false);
+  };
+
+  const handleCancelGithubLinkEdit = () => {
+    setGithubLink(task.githubLink || "");
+    setIsEditingGithubLink(false);
+  };
+
+  const handleCancelDescriptionEdit = () => {
+    setDescription(task.description || "");
+    setIsEditingDescription(false);
   };
 
   if (!isOpen) return null;
@@ -50,47 +67,127 @@ return (
                 ))}
             </div>
             <form onSubmit={handleSubmit} className={`flex flex-col space-y-4 transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-4 space-x-4">
+            <div className="flex items-center ">
             {isEditingTitle ? (
-              <input
-                type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="border rounded-xl p-2 flex-grow"
-                placeholder="Task Name"
-                onBlur={() => setIsEditingTitle(false)}
-              />
+              <div className="flex items-center w-full">
+                <input
+                  type="text"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="border rounded-xl p-2 flex-grow"
+                  placeholder="Task Name"
+                />
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingTitle(false)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-full"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelTitleEdit}
+                    className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-full"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             ) : (
-              <h2 className="text-xl font-bold flex-grow">{content}</h2>
+              <div className="flex items-center">
+                <h2 className="text-xl font-bold flex-grow">{content}</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingTitle(true)}
+                  className="ml-2 text-gray-600 hover:text-gray-800"
+                >
+                  <PencilIcon className="h-5 w-5" />
+                </button>
+              </div>
             )}
-            <button
-              type="button"
-              onClick={() => setIsEditingTitle(true)}
-              className="ml-2 text-gray-600 hover:text-gray-800"
-            >
-              <PencilIcon className="h-5 w-5" />
-            </button>
+            </div>
+            <div className="flex items-center">
+            {isEditingGithubLink ? (
+              <div className="flex flex-col w-full">
+                <input
+                  type="text"
+                  value={githubLink}
+                  onChange={(e) => setGithubLink(e.target.value)}
+                  className="border rounded-xl p-2 flex-grow"
+                  placeholder="GitHub Issue Link"
+                />
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingGithubLink(false)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-full"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelGithubLinkEdit}
+                    className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-full"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center w-full">
+                <p className="flex-grow text-gray-500">{githubLink || "Add GitHub Issue Link..."}</p>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingGithubLink(true)}
+                  className="ml-2 text-gray-600 hover:text-gray-800"
+                >
+                  <PencilIcon className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+          </div>
           </div>
           <div className="flex items-center mb-4">
-            {isEditingDescription ? (
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="border rounded-xl p-2 flex-grow"
-                placeholder="Task Description"
-                rows="4"
-                onBlur={() => setIsEditingDescription(false)}
-              />
+          {isEditingDescription ? (
+              <div className="flex flex-col w-full">
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="border rounded-xl p-2 flex-grow"
+                  placeholder="Task Description"
+                  rows="4"
+                />
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingDescription(false)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-full"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelDescriptionEdit}
+                    className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-full"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             ) : (
-              <p className="flex-grow text-gray-500">{description || "Write a description..."}</p>
+              <div className="flex items-center">
+                <p className="flex-grow text-gray-500">{description || "Write a description..."}</p>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingDescription(true)}
+                  className="ml-2 text-gray-600 hover:text-gray-800"
+                >
+                  <PencilIcon className="h-5 w-5" />
+                </button>
+              </div>
             )}
-            <button
-              type="button"
-              onClick={() => setIsEditingDescription(true)}
-              className="ml-2 text-gray-600 hover:text-gray-800"
-            >
-              <PencilIcon className="h-5 w-5" />
-            </button>
           </div>
             
             <div className="flex items-center mb-4">
@@ -102,7 +199,7 @@ return (
                     alt={member.name}
                     className="w-12 h-12 rounded-full"
                   />
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-[-2.5rem] px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     {member.name}
                   </span>
                 </div>
