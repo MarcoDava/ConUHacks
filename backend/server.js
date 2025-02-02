@@ -3,10 +3,13 @@ import cors from "cors";
 import { createApolloServer } from "./graphql.js";
 import { fetchAllUserCode } from "./githubService.js";
 import { callChatGPT } from "./chatGPTService.js";
+import { fetchUserRepositories } from "./githubService2.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+
 
 /**
  * POST /chat
@@ -28,6 +31,28 @@ app.post("/chat", async (req, res) => {
     console.error("ChatGPT API call failed:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
+});
+
+/**
+ * GET /github/repositories
+ * Expects a query parameter:
+ *   - username: The GitHub username whose repositories you want to fetch.
+ */
+app.get("/github/repositories", async (req, res) => {
+    const { username } = req.query;
+  
+    if (!username) {
+      return res.status(400).json({ error: "GitHub username is required." });
+    }
+  
+    try {
+      // Fetch the repositories for the given GitHub username
+      const repositories = await fetchUserRepositories(username);
+      res.json(repositories);
+    } catch (error) {
+      console.error("Error fetching repositories:", error.message);
+      res.status(500).json({ error: "Failed to fetch repositories.", details: error.message });
+    }
 });
 
 /**
