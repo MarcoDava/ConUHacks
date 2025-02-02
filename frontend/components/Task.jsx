@@ -25,7 +25,7 @@ export default function Task({ task, index, updateTask, deleteTask }) {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className={`${task.color} p-4 px-6 mb-2 rounded shadow`}
+            className={`${task.color} p-4 px-6 mb-2 rounded shadow border-2 border-gray-300`}
           >
             <div className="flex justify-between items-center">
               <span className="mr-2">{task.content}</span>

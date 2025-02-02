@@ -38,8 +38,8 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
 
 return (
     <div className={`fixed inset-0 bg-gray-100 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-        <div className={`p-6 rounded-xl shadow-lg w-3/4 ${color} transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
-        <   div className="flex space-x-2">
+        <div className={`p-6 rounded-xl shadow-lg w-3/4 ${color} transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'} border-2 border-gray-500`}>
+            <div className="flex space-x-2">
                 {colors.map((c) => (
                     <button
                         key={c}
