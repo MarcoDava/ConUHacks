@@ -1,20 +1,44 @@
 import { ApolloServer, gql } from "apollo-server-express";
-import { fetchFileList, fetchAllUserCode } from "./githubService.js";
+import dotenv from "dotenv";
+import { fetchAllUserCode } from "./githubService.js";
 
+dotenv.config();
+
+// Define your GraphQL schema
 const typeDefs = gql`
-    type Query {
-        listFiles(owner: String!, repo: String!, branch: String!): [String]
-        getAllUserCode(owner: String!, repo: String!, branch: String!, targetUser: String!): String
-    }
+  type FileWithCode {
+    filePath: String
+    code: [String]
+  }
+
+  type Query {
+    # Returns all code authored by a target user across all files in the repository
+    getAllUserCode(owner: String!, repo: String!, branch: String!, targetUser: String!): [FileWithCode]
+  }
 `;
 
+// Define your resolvers
 const resolvers = {
-    Query: {
-        listFiles: async (_, { owner, repo, branch }) => fetchFileList(owner, repo, branch),
-        getAllUserCode: async (_, { owner, repo, branch, targetUser }) => fetchAllUserCode(owner, repo, branch, targetUser),
+  Query: {
+    getAllUserCode: async (_, { owner, repo, branch, targetUser }) => {
+      try {
+        const codeData = await fetchAllUserCode(owner, repo, branch, targetUser);
+        return Object.entries(codeData).map(([filePath, code]) => ({
+          filePath,
+          code,
+        }));
+      } catch (error) {
+        console.error("Error in getAllUserCode resolver:", error.message);
+        throw new Error("Failed to fetch all user code.");
+      }
     },
+  },
 };
 
-export function createApolloServer() {
-    return new ApolloServer({ typeDefs, resolvers });
+/**
+ * Creates and returns an instance of ApolloServer.
+ */
+export async function createApolloServer() {
+  const server = new ApolloServer({ typeDefs, resolvers });
+  return server;
 }
