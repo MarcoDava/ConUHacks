@@ -86,6 +86,7 @@ app.get("/github/user-code", async (req, res) => {
  *   - usernames: an array of GitHub usernames to process.
  */
 app.post("/process-issue", async (req, res) => {
+    console.log("Request Body:", req.body);
     const { githubIssue, usernames, format } = req.body;
   
     if (!githubIssue || !Array.isArray(usernames) || usernames.length === 0) {
