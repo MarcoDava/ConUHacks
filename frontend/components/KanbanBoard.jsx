@@ -34,60 +34,49 @@ const initialData = {
 }
 
 export default function KanbanBoard() {
-  const [board, setBoard] = useState(initialData)
-  const [filter, setFilter] = useState("")
+  const [board, setBoard] = useState(initialData);
+  const [filter, setFilter] = useState("");
 
   const onDragEnd = (result) => {
-    const { destination, source, draggableId } = result
-
+    const { destination, source, draggableId } = result;
     if (!destination) {
-      return
+      return;
     }
-
     if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return
+      return;
     }
-
-    const start = board.columns[source.droppableId]
-    const finish = board.columns[destination.droppableId]
-
+    const start = board.columns[source.droppableId];
+    const finish = board.columns[destination.droppableId];
     if (start === finish) {
-      const newTaskIds = Array.from(start.taskIds)
-      newTaskIds.splice(source.index, 1)
-      newTaskIds.splice(destination.index, 0, draggableId)
-
+      const newTaskIds = Array.from(start.taskIds);
+      newTaskIds.splice(source.index, 1);
+      newTaskIds.splice(destination.index, 0, draggableId);
       const newColumn = {
         ...start,
         taskIds: newTaskIds,
-      }
-
+      };
       const newBoard = {
         ...board,
         columns: {
           ...board.columns,
           [newColumn.id]: newColumn,
         },
-      }
-
-      setBoard(newBoard)
-      return
+      };
+      setBoard(newBoard);
+      return;
     }
-
-    // Moving from one list to another
-    const startTaskIds = Array.from(start.taskIds)
-    startTaskIds.splice(source.index, 1)
+    const startTaskIds = Array.from(start.taskIds);
+    startTaskIds.splice(source.index, 1);
     const newStart = {
       ...start,
       taskIds: startTaskIds,
-    }
-
-    const finishTaskIds = Array.from(finish.taskIds)
-    finishTaskIds.splice(destination.index, 0, draggableId)
+    };
+    const finishTaskIds = Array.from(finish.taskIds);
+    finishTaskIds.splice(destination.index, 0, draggableId);
     const newFinish = {
       ...finish,
       taskIds: finishTaskIds,
-    }
-
+    };
     const newBoard = {
       ...board,
       columns: {
@@ -95,18 +84,17 @@ export default function KanbanBoard() {
         [newStart.id]: newStart,
         [newFinish.id]: newFinish,
       },
-    }
-    setBoard(newBoard)
-  }
+    };
+    setBoard(newBoard);
+  };
 
   const addTask = (content) => {
-    const newTaskId = `task-${Object.keys(board.tasks).length + 1}`
+    const newTaskId = `task-${Object.keys(board.tasks).length + 1}`;
     const newTask = {
       id: newTaskId,
       content,
-      color: "bg-gray-200", // Default color
-    }
-
+      color: "bg-gray-200",
+    };
     const newBoard = {
       ...board,
       tasks: {
@@ -120,10 +108,9 @@ export default function KanbanBoard() {
           taskIds: [...board.columns["column-1"].taskIds, newTaskId],
         },
       },
-    }
-
-    setBoard(newBoard)
-  }
+    };
+    setBoard(newBoard);
+  };
 
   const updateTask = (taskId, newContent, newColor) => {
     const newBoard = {
@@ -136,59 +123,59 @@ export default function KanbanBoard() {
           color: newColor,
         },
       },
-    }
-
-    setBoard(newBoard)
-  }
+    };
+    setBoard(newBoard);
+  };
 
   const deleteTask = (taskId) => {
-    const newTasks = { ...board.tasks }
-    delete newTasks[taskId]
-
+    const newTasks = { ...board.tasks };
+    delete newTasks[taskId];
     const newColumns = Object.keys(board.columns).reduce((acc, columnId) => {
       acc[columnId] = {
         ...board.columns[columnId],
         taskIds: board.columns[columnId].taskIds.filter((id) => id !== taskId),
-      }
-      return acc
-    }, {})
-
+      };
+      return acc;
+    }, {});
     const newBoard = {
       ...board,
       tasks: newTasks,
       columns: newColumns,
-    }
-
-    setBoard(newBoard)
-  }
+    };
+    setBoard(newBoard);
+  };
 
   const filteredTasks = (tasks) => {
-    if (!filter) return tasks
+    if (!filter) return tasks;
     return tasks.filter((task) =>
       task.content.toLowerCase().includes(filter.toLowerCase()) ||
-      task.color.toLowerCase().includes(filter.toLowerCase()));
-  }
+      task.color.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
 
-  return (<>
-    <TaskForm onSubmit={addTask} />
-    <FilterBar setFilter={setFilter} />
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex space-x-4">
-        {board.columnOrder.map((columnId) => {
-          const column = board.columns[columnId]
-          const tasks = filteredTasks(column.taskIds.map((taskId) => board.tasks[taskId]))
-
-          return (
-            (<Column
-              key={column.id}
-              column={column}
-              tasks={tasks}
-              updateTask={updateTask}
-              deleteTask={deleteTask} />)
-          );
-        })}
+  return (
+    <div>
+      <div className="flex space-x-4 mb-4">
+        <TaskForm onSubmit={addTask} />
+        <FilterBar setFilter={setFilter} />
       </div>
-    </DragDropContext>
-  </>);
+      <DragDropContext className="flex flex-1 px-4 min-w-[1000px]" onDragEnd={onDragEnd}>
+        <div className="flex flex-1 space-x-4">
+          {board.columnOrder.map((columnId) => {
+            const column = board.columns[columnId];
+            const tasks = filteredTasks(column.taskIds.map((taskId) => board.tasks[taskId]));
+            return (
+              <Column
+                key={column.id}
+                column={column}
+                tasks={tasks}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              />
+            );
+          })}
+        </div>
+      </DragDropContext>
+    </div>
+  );
 }
-
