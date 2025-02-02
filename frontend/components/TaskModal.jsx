@@ -51,22 +51,33 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const handleCancelDescriptionEdit = () => {
     setDescription(task.description || "");
     setIsEditingDescription(false);
+    console.log(description);
   };
 
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+    console.log(e.target.value);
+  }
+
   const handleFindCandidate = async () => {
-    // if (!description) {
-    //   alert("Please provide a GitHub issue description.");
-    //   return;
-    // }    
+    if (!content) {
+      alert("Please provide a GitHub issue description.");
+      return;
+    }    
 
     const developers = teamMembers.map((member) => member.username);
     const response = await fetch("http://localhost:4000/process-issue", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ githubIssue: "fix stuff", usernames: developers, format: "json" }),
+      body: JSON.stringify({ githubIssue: content, usernames: developers, format: "json" }),
     });
-    const { result } = await response.json();
-    setTextAreaText(JSON.stringify(result.best1));
+    const result  = await response.json();
+    const best1 = result.best1;
+    const best2 = result.best2;
+
+    const text = `Best Candidate 1:\nName: ${best1.name}\nReason: ${best1.reason}\n\nBest Candidate 2:\nName: ${best2.name}\nReason: ${best2.reason}`;
+
+    setTextAreaText(text);
     setIsTextBoxVisible(true);
   };
 
@@ -173,7 +184,7 @@ return (
               <div className="flex flex-col w-full">
                 <textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={handleDescriptionChange}
                   className="border rounded-xl p-2 flex-grow"
                   placeholder="Task Description"
                   rows="4"
