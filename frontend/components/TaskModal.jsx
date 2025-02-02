@@ -1,5 +1,6 @@
 // frontend/components/TaskModal.jsx
 import { useState } from "react";
+import { PencilIcon } from "@heroicons/react/solid";
 
 const colors = [
     "bg-gray-200",
@@ -14,6 +15,7 @@ const colors = [
 export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [content, setContent] = useState(task.content);
   const [color, setColor] = useState(task.color || "bg-gray-200");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,15 +28,28 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
 return (
     <div className={`fixed inset-0 bg-gray-100 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
         <div className={`p-6 rounded-xl shadow-lg w-3/4 ${color} transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
-            <h2 className="text-xl font-bold mb-4">Edit Task</h2>
             <form onSubmit={handleSubmit} className={`flex flex-col space-y-4 transform transition-transform duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
-                <input
-                    type="text"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="border rounded-xl p-2"
-                    placeholder="Task Name"
-                />
+            <div className="flex items-center mb-4">
+            {isEditingTitle ? (
+              <input
+                type="text"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="border rounded-xl p-2 flex-grow"
+                placeholder="Task Name"
+                onBlur={() => setIsEditingTitle(false)}
+              />
+            ) : (
+              <h2 className="text-xl font-bold flex-grow">{content}</h2>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsEditingTitle(true)}
+              className="ml-2 text-gray-600 hover:text-gray-800"
+            >
+              <PencilIcon className="h-5 w-5" />
+            </button>
+          </div>
                 <div className="flex space-x-2">
                     {colors.map((c) => (
                         <button
