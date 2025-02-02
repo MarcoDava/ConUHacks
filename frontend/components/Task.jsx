@@ -28,8 +28,20 @@ export default function Task({ task, index, updateTask, deleteTask }) {
             className={`${task.color} p-4 px-6 mb-2 rounded shadow border-2 border-gray-300`}
           >
             <div className="flex justify-between items-center">
-              <span className="mr-2">{task.content}</span>
-              <div className="flex space-x-2">
+              <span className="mr-4">{task.content}</span>
+              <div className="flex space-x-2 items-center">
+                {task.assignedMember && (
+                  <div className="relative group">
+                    <img
+                      src={task.assignedMember.image}
+                      alt={task.assignedMember.name}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {task.assignedMember.name}
+                    </span>
+                  </div>
+                )}
                 <button onClick={() => setIsModalOpen(true)} className="text-gray-200 bg-blue-400 hover:bg-blue-600 transition duration-300 border px-3 py-1.5 rounded-full">
                   View
                 </button>

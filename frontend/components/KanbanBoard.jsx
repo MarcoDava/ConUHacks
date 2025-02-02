@@ -36,6 +36,7 @@ const initialData = {
 export default function KanbanBoard() {
   const [board, setBoard] = useState(initialData);
   const [filter, setFilter] = useState("");
+  
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -94,6 +95,7 @@ export default function KanbanBoard() {
       id: newTaskId,
       content,
       color: "bg-gray-200",
+      assignedMember: null,
     };
     const newBoard = {
       ...board,
@@ -112,7 +114,7 @@ export default function KanbanBoard() {
     setBoard(newBoard);
   };
 
-  const updateTask = (taskId, newContent, newColor) => {
+  const updateTask = (taskId, newContent, newColor, newDescription, newGithubLink, newAssignedMember) => {
     const newBoard = {
       ...board,
       tasks: {
@@ -121,6 +123,9 @@ export default function KanbanBoard() {
           ...board.tasks[taskId],
           content: newContent,
           color: newColor,
+          description: newDescription,
+          githubLink: newGithubLink,
+          assignedMember: newAssignedMember,
         },
       },
     };
