@@ -14,12 +14,14 @@ const colors = [
 
 export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [content, setContent] = useState(task.content);
+  const [description, setDescription] = useState(task.description || "");
   const [color, setColor] = useState(task.color || "bg-gray-200");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateTask(task.id, content, color);
+    updateTask(task.id, content, color, description);
     onClose();
   };
 
@@ -50,6 +52,27 @@ return (
               <PencilIcon className="h-5 w-5" />
             </button>
           </div>
+          <div className="flex items-center mb-4">
+            {isEditingDescription ? (
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="border rounded-xl p-2 flex-grow"
+                placeholder="Task Description"
+                rows="4"
+                onBlur={() => setIsEditingDescription(false)}
+              />
+            ) : (
+              <p className="flex-grow text-gray-500">{description || "Write a description..."}</p>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsEditingDescription(true)}
+              className="ml-2 text-gray-600 hover:text-gray-800"
+            >
+              <PencilIcon className="h-5 w-5" />
+            </button>
+          </div>
                 <div className="flex space-x-2">
                     {colors.map((c) => (
                         <button
@@ -62,10 +85,10 @@ return (
                 </div>
                 {/* Future features like chatbot textbox and drag and drop contributor list can be added here */}
                 <div className="flex justify-between">
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-full">
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 transition duration-300 rounded-full">
                         Save
                     </button>
-                    <button type="button" onClick={onClose} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-full">
+                    <button type="button" onClick={onClose} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 transition duration-300 rounded-full">
                         Cancel
                     </button>
                 </div>
