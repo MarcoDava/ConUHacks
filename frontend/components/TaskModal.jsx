@@ -25,6 +25,7 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
   const [description, setDescription] = useState(task.description || "");
   const [color, setColor] = useState(task.color || "bg-gray-200");
   const [githubLink, setGithubLink] = useState(task.githubLink || "");
+  const [assignedMember, setAssignedMember] = useState(task.assignedMember || null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingGithubLink, setIsEditingGithubLink] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -32,7 +33,7 @@ export default function TaskModal({ task, isOpen, onClose, updateTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateTask(task.id, content, color, description);
+    updateTask(task.id, content, color, description, githubLink, assignedMember);
     onClose();
   };
 
@@ -220,6 +221,25 @@ return (
               rows="4"
             />
           )}
+          <div className="flex items-center mb-4">
+            <label className="mr-2">Assign</label>
+            <select
+              value={assignedMember ? assignedMember.id : ""}
+              onChange={(e) => {
+                const member = teamMembers.find((m) => m.id === parseInt(e.target.value));
+                setAssignedMember(member);
+              }}
+              className="border rounded-xl p-2"
+            >
+              <option value="">Select a team member</option>
+              {teamMembers.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+            <span className="ml-2">to task</span>
+          </div>
                 <div className="flex justify-between">
                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 transition duration-300 rounded-full">
                         Save
