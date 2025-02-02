@@ -20,7 +20,7 @@ export default function FilterBar({ setFilter }) {
         className="border rounded p-2 mr-2" />
       <button
         type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded transition duration-300">
         Filter
       </button>
     </form>)
