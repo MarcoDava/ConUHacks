@@ -16,7 +16,7 @@ export default function Navbar() {
       <ul className="flex-grow">
         {navItems.map((item) => (
           <li key={item.href} className="mb-4">
-            <Link href={item.href} className="flex items-center hover:text-gray-300">
+            <Link href={item.href} className="flex items-center hover:text-gray-400 transition duration-300">
               <item.icon className="mr-2" size={20} />
               <span>{item.label}</span>
             </Link>

@@ -28,12 +28,12 @@ export default function Task({ task, index, updateTask, deleteTask }) {
             className={`${task.color} p-4 px-6 mb-2 rounded shadow`}
           >
             <div className="flex justify-between items-center">
-              <span className="mr-4">{task.content}</span>
+              <span className="mr-2">{task.content}</span>
               <div className="flex space-x-2">
-                <button onClick={() => setIsModalOpen(true)} className="text-gray-200 bg-blue-600 hover:bg-blue-700 border px-3 py-1 rounded-lg">
+                <button onClick={() => setIsModalOpen(true)} className="text-gray-200 bg-blue-400 hover:bg-blue-600 transition duration-300 border px-3 py-1.5 rounded-full">
                   Edit
                 </button>
-                <button onClick={() => deleteTask(task.id)} className="text-gray-200 bg-red-700 hover:bg-red-800 border px-3 py-1 rounded-lg">
+                <button onClick={() => deleteTask(task.id)} className="text-gray-200 bg-red-500 hover:bg-red-700 transition duration-300 border px-3 py-1.5 rounded-full">
                   Delete
                 </button>
               </div>
